@@ -18,7 +18,10 @@ def index(request):
 
     # The 'all()' is implied by default.
     num_authors = Author.objects.count()
-
+    
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
+    
     context = {
         'num_books': num_books,
         'num_instances': num_instances,
