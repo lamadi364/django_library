@@ -42,11 +42,16 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
-def book_detail_view(request, primary_key):
-    book = get_object_or_404(Book, pk=primary_key)
-    return render(request, 'catalog/book_detail.html', context={'book': book})
+# def book_detail_view(request, primary_key):
+#     book = get_object_or_404(Book, pk=primary_key)
+#     return render(request, 'catalog/book_detail.html', context={'book': book})
 
+
+
+@login_required
+@permission_required('catalog.can_mark_returned', raise_exception=True)
 def renew_book_librarian(request, pk):
+    """View function for renewing a specific BookInstance by librarian."""
     book_instance = get_object_or_404(BookInstance, pk=pk)
 
     # If this is a POST request then process the Form data
@@ -76,11 +81,10 @@ def renew_book_librarian(request, pk):
 
     return render(request, 'catalog/book_renew_librarian.html', context)
 
-
 class BookListView(generic.ListView):
     model = Book
     context_object_name = 'book_list'   # your own name for the list as a template variable
-    queryset = Book.objects.filter()[:5] # Get 5 books containing the title war
+    # queryset = Book.objects.filter()[:5] # Get 5 books containing the title war
     template_name = 'books/book_list.html'  # Specify your own template name/location
     paginate_by = 10
     
@@ -99,10 +103,9 @@ class AuthorListView(generic.ListView):
     model = Author
     context_object_name = 'author_list'
     template_name = 'books/author_list.html'
-    
-    paginate_by = 10
-    def get_book_queryset(self):
-        return Book.objects.filter()[:5]
+    paginate_by = 5
+
+    queryset = Author.objects.all();
     
 class AuthorDetailView(generic.DetailView):    
     model = Author
@@ -125,10 +128,11 @@ class LoanedBooksByLibrarianListView(PermissionRequiredMixin, generic.ListView):
     template_name = 'catalog/bookinstance_list_borrowed_lib.html'
     paginate_by = 10
     
-    permission_required = 'can_mark_returned'
+    permission_required = 'catalog.can_mark_returned'
     
     def get_queryset(self):
         return (
             BookInstance.objects.filter(status__exact='o')
             .order_by('due_back')
         )
+
