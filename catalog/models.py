@@ -121,7 +121,10 @@ class Author(models.Model):
 
     class Meta:
         ordering = ['last_name', 'first_name']
-
+        # permissions = (("change_author", "can change author detail"),
+        #                ("delete_author", "can detele author with no books"), 
+        #                ("add_author", "can add author"))
+        
     def get_absolute_url(self):
         """Returns the URL to access a particular author instance."""
         return reverse('author-detail', args=[str(self.id)])
@@ -132,20 +135,6 @@ class Author(models.Model):
 
 class RenewBookModelForm(ModelForm):
     
-    def clean_due_back(self):
-        data = self.cleaned_data['due_back']
-    
-        # Check if a date is not in the past.
-        if data < datetime.date.today():
-            raise ValidationError(_('Invalid date - renewal in past'))
-    
-        # Check if a date is in the allowed range (+4 weeks from today).
-        if data > datetime.date.today() + datetime.timedelta(weeks=4):
-            raise ValidationError(_('Invalid date - renewal more than 4 weeks ahead'))
-    
-        # Remember to always return the cleaned data.
-        return data
-   
     class Meta:
         model = BookInstance
         fields = ['due_back']
