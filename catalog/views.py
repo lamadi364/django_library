@@ -16,7 +16,9 @@ from django.http import HttpResponseRedirect
 # Create your views here.
 
 from .models import Book, Author, BookInstance, Genre   
-from .form import RenewBookForm
+from .forms import RenewBookForm
+from lib2to3.fixes.fix_input import context
+
 
 def index(request):
     """View function for home page of site."""
@@ -89,7 +91,7 @@ class BookListView(generic.ListView):
     context_object_name = 'book_list'   # your own name for the list as a template variable
     # queryset = Book.objects.filter()[:5] # Get 5 books containing the title war
     template_name = 'books/book_list.html'  # Specify your own template name/location
-    paginate_by = 10
+    paginate_by = 4
     
     # def get_context_data(self, **kwargs):
     #     # Call the base implementation first to get the context
@@ -106,12 +108,17 @@ class AuthorListView(generic.ListView):
     model = Author
     context_object_name = 'author_list'
     template_name = 'books/author_list.html'
-    paginate_by = 5
+    paginate_by = 10
 
     queryset = Author.objects.all();
     
 class AuthorDetailView(generic.DetailView):    
     model = Author
+    
+    def get_queryset(self):
+        return (
+           Author.objects
+        )
 
 class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
     """Generic class-based view listing books on loan to current user."""
@@ -182,7 +189,7 @@ class BookUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = 'catalog.change_book'
 
 class BookDelete(PermissionRequiredMixin, DeleteView):
-    model = Author
+    model = Book
     success_url = reverse_lazy('books')
     permission_required = 'catalog.delete_book'
     template_name_suffix = '_confirm_delete'

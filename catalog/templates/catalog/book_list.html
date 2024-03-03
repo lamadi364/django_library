@@ -14,4 +14,9 @@
   {% else %}
     <p>There are no books in the library.</p>
   {% endif %}
+  
+{% block pagination %}
+{{ block.super }}
+{% endblock %}
+  
 {% endblock %}

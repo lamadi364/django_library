@@ -9,7 +9,7 @@
 
   <div style="margin-left:20px;margin-top:20px">
     <h4>Books</h4>
-	{% if book_set.all %}
+	{% if author.book_set.all %}
     {% for book in author.book_set.all %}
       <hr />
       <p>
@@ -18,6 +18,7 @@
 	  <p>
 		{{ book.summary }}
       </p>
+	  
     {% endfor %}
 	{% else %}
 	<p>The author has no books in the database</p>
