@@ -108,7 +108,7 @@ class AuthorListView(generic.ListView):
     model = Author
     context_object_name = 'author_list'
     template_name = 'books/author_list.html'
-    paginate_by = 10
+    paginate_by = 4
 
     queryset = Author.objects.all();
     
