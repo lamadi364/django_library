@@ -12,4 +12,9 @@
 	  <p>There are no authors now</p>
       {% endfor %}
     </ul>
+	
+	{% block pagination %}
+	{{ block.super }}
+	{% endblock %}
+	
 {% endblock %}
